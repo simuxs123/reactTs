@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classes from './BurgerIngridient.module.scss';
 
 type Props = {
-  type: String;
+  type: string;
 };
 
 export class BurgerIngridient extends Component<Props> {
@@ -29,7 +29,7 @@ export class BurgerIngridient extends Component<Props> {
       case 'salad':
         ingridients = <div className={classes.Salad}></div>;
         break;
-      case 'Bacon':
+      case 'bacon':
         ingridients = <div className={classes.Bacon}></div>;
         break;
       default:
