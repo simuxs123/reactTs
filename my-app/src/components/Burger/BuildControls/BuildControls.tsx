@@ -1,13 +1,15 @@
 import React from 'react';
 import classes from './BuildControls.module.scss';
 import { BuildControl } from './BuildControl/BuildControl';
-type Disable = {
-  [key: string]: boolean;
-};
+import { Disable } from '../../../containers/BurgerBuilder/BurgerBuilder';
+
 type Props = {
   ingridientAdded(type: string): void;
   ingridientRemove(type: string): void;
+  ordered(): void;
+  purchasable: boolean;
   disable: Disable;
+  totalPrice: number;
 };
 type Control = {
   label: string;
@@ -23,6 +25,9 @@ const controls: Control = [
 export const BuildControls: React.FC<Props> = (props) => {
   return (
     <div className={classes.BuildControls}>
+      <p>
+        Total price: <strong>{props.totalPrice.toFixed(2)}$</strong>
+      </p>
       {controls.map((item) => {
         return (
           <BuildControl
@@ -34,6 +39,13 @@ export const BuildControls: React.FC<Props> = (props) => {
           />
         );
       })}
+      <button
+        className={classes.OrderButton}
+        disabled={!props.purchasable}
+        onClick={props.ordered}
+      >
+        ORDER NOW
+      </button>
     </div>
   );
 };

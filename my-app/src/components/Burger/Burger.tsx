@@ -1,12 +1,10 @@
 import React, { FC } from 'react';
 import { BurgerIngridient } from './BurgerIngridient/BurgerIngridient';
 import classes from './Burger.module.scss';
+import { Ingridients } from '../../containers/BurgerBuilder/BurgerBuilder';
 type Props = {
-  ingridients: {
-    [index: string]: number;
-  };
+  ingridients: Ingridients;
 };
-
 export const Burger: FC<Props> = (props) => {
   let transformIngridients: JSX.Element | JSX.Element[] = Object.keys(
     props.ingridients
