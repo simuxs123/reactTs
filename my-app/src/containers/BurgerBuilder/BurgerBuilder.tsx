@@ -3,6 +3,7 @@ import { Burger } from '../../components/Burger/Burger';
 import { BuildControls } from '../../components/Burger/BuildControls/BuildControls';
 import { Modal } from '../../components/UI/Modal/Modal';
 import { OrderSummary } from '../../components/Burger/OrderSummary/OrderSummary';
+
 export interface Ingridients {
   [key: string]: number;
 }
@@ -31,8 +32,8 @@ export class BurgerBuilder extends Component {
     ingridients: {
       salad: 0,
       bacon: 0,
-      meat: 0,
       cheese: 0,
+      meat: 0,
     },
     totalPrice: 0,
     purchasable: false,
@@ -98,6 +99,7 @@ export class BurgerBuilder extends Component {
             ingridients={this.state.ingridients}
             moduleClose={this.purchaseCancelHandler}
             continuePurchase={this.purchaseContinueHandler}
+            totalPrice={this.state.totalPrice}
           />
         </Modal>
         <Burger ingridients={this.state.ingridients} />
