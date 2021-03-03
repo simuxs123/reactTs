@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, SyntheticEvent } from 'react';
 import classes from './Button.module.scss';
 type Props = {
   btnType: string;
-  clicked(): void;
+  clicked?(event?: SyntheticEvent): void;
 };
 export const Button: FC<Props> = (props) => (
   <button

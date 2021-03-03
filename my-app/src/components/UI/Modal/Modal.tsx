@@ -1,13 +1,17 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, ReactNode } from 'react';
 import classes from './Modal.module.scss';
 import { Backdrop } from '../Backdrop/Backdrop';
 export interface Props {
-  show: boolean;
-  moduleClose(): void;
+  show?: boolean | null;
+  moduleClose?(): void;
+  children?: ReactNode;
 }
 export class Modal extends Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
-    return nextProps.show !== this.props.show;
+    return (
+      nextProps.show !== this.props.show ||
+      nextProps.children !== this.props.children
+    );
   }
 
   render() {
