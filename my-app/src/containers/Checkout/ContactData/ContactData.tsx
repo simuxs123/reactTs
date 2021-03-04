@@ -17,8 +17,13 @@ type ElementProps = {
   elementType: string;
   elementConfig: ConfigProps;
   value: string;
-  validation: { required: boolean; minLength?: number; maxLength?: number };
+  validation: Validation;
   valid: boolean;
+};
+type Validation = {
+  required: boolean;
+  minLength?: number;
+  maxLength?: number;
 };
 export interface ConfigProps {
   type?: string;
@@ -142,11 +147,8 @@ export class ContactData extends Component<Props, State> {
       console.log(err);
     }
   };
-  checkValidity = (
-    value: string,
-    rules: { required: boolean; minLength?: number; maxLength?: number }
-  ) => {
-    let isValid = false;
+  checkValidity = (value: string, rules: Validation) => {
+    let isValid = true;
     if (rules.required) {
       isValid = value.trim() !== '' && isValid;
     }
