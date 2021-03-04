@@ -12,16 +12,21 @@ type Props = {
   label?: string;
   value: string;
   elementConfig: ConfigProps;
+  invalid: boolean;
+  touched: boolean;
 };
 
 export const Input: FC<Props> = (props) => {
   let inputElement: null | JSX.Element = null;
-
+  const inputClasses: string[] = [classes.InputElement];
+  if (props.invalid && props.touched) {
+    inputClasses.push(classes.Invalid);
+  }
   switch (props.elementType) {
     case 'input':
       inputElement = (
         <input
-          className={classes.InputElement}
+          className={inputClasses.join(' ')}
           {...props.elementConfig}
           value={props.value}
           onChange={props.changed}
@@ -31,7 +36,7 @@ export const Input: FC<Props> = (props) => {
     case 'textarea':
       inputElement = (
         <textarea
-          className={classes.InputElement}
+          className={inputClasses.join(' ')}
           {...props.elementConfig}
           value={props.value}
           onChange={props.changed}
@@ -41,7 +46,7 @@ export const Input: FC<Props> = (props) => {
     case 'select':
       inputElement = (
         <select
-          className={classes.InputElement}
+          className={inputClasses.join(' ')}
           value={props.value}
           onChange={props.changed}
         >
@@ -56,7 +61,7 @@ export const Input: FC<Props> = (props) => {
     default:
       inputElement = (
         <input
-          className={classes.InputElement}
+          className={inputClasses.join(' ')}
           {...props.elementConfig}
           value={props.value}
           onChange={props.changed}

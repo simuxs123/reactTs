@@ -9,6 +9,7 @@ import { Spinner } from '../../../components/UI/Spinner/Spinner';
 type State = {
   loading: boolean;
   orderForm: OrderForm;
+  formIsValid: boolean;
 };
 type OrderForm = {
   [key: string]: ElementProps;
@@ -19,6 +20,7 @@ type ElementProps = {
   value: string;
   validation: Validation;
   valid: boolean;
+  touched: boolean;
 };
 type Validation = {
   required: boolean;
@@ -57,6 +59,7 @@ export class ContactData extends Component<Props, State> {
           required: true,
         },
         valid: false,
+        touched: false,
       },
       street: {
         elementType: 'input',
@@ -69,6 +72,7 @@ export class ContactData extends Component<Props, State> {
           required: true,
         },
         valid: false,
+        touched: false,
       },
       postCode: {
         elementType: 'input',
@@ -83,6 +87,7 @@ export class ContactData extends Component<Props, State> {
           maxLength: 5,
         },
         valid: false,
+        touched: false,
       },
       country: {
         elementType: 'input',
@@ -95,6 +100,7 @@ export class ContactData extends Component<Props, State> {
           required: true,
         },
         valid: false,
+        touched: false,
       },
       email: {
         elementType: 'input',
@@ -107,11 +113,13 @@ export class ContactData extends Component<Props, State> {
           required: true,
         },
         valid: false,
+        touched: false,
       },
       deliveryMethod: {
         elementType: 'select',
         elementConfig: {
           options: [
+            { value: '', displayValue: 'Delivery' },
             { value: 'fastest', displayValue: 'Fastest' },
             { value: 'slowest', displayValue: 'Slowest' },
           ],
@@ -121,9 +129,10 @@ export class ContactData extends Component<Props, State> {
           required: true,
         },
         valid: false,
+        touched: false,
       },
     },
-
+    formIsValid: false,
     loading: false,
   };
   orderHandler = async (event: SyntheticEvent) => {
@@ -176,8 +185,13 @@ export class ContactData extends Component<Props, State> {
       updatedFormElement.value,
       updatedFormElement.validation
     );
+    updatedFormElement.touched = true;
     updatedFormOrder[inputIndetifier] = updatedFormElement;
-    this.setState({ orderForm: updatedFormOrder });
+    let formIsValid: boolean = true;
+    for (let [key, value] of Object.entries(updatedFormOrder)) {
+      formIsValid = value.valid && formIsValid;
+    }
+    this.setState({ orderForm: updatedFormOrder, formIsValid: formIsValid });
   };
   render() {
     const formElementsArray = [];
@@ -197,10 +211,14 @@ export class ContactData extends Component<Props, State> {
               value={config.value}
               elementConfig={config.elementConfig}
               changed={(event) => this.changeHandler(event, id)}
+              invalid={!config.valid}
+              touched={config.touched}
             />
           );
         })}
-        <Button btnType="Success">Order</Button>
+        <Button btnType="Success" disabled={!this.state.formIsValid}>
+          Order
+        </Button>
       </form>
     );
     if (this.state.loading) {
