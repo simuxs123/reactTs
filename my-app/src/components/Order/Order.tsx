@@ -1,15 +1,14 @@
 import React, { FC } from 'react';
-import { Ingridients } from '../../containers/BurgerBuilder/BurgerBuilder';
+import { BurgerProps } from '../../containers/BurgerBuilder/BurgerBuilder';
 import classes from './Order.module.scss';
-type Props = {
-  ingridients: Ingridients;
-  price: number;
-};
 
-export const Order: FC<Props> = (props) => {
-  const ingridients = [];
-  for (let [key, value] of Object.entries(props.ingridients)) {
-    ingridients.push({ name: key, amount: value });
+export const Order: FC<BurgerProps> = (props) => {
+  const ingridients: { name: string; amount: number }[] = [];
+  for (let ingridient in props.ingridients) {
+    ingridients.push({
+      name: ingridient,
+      amount: props.ingridients[ingridient],
+    });
   }
   const ingridientsOutput = ingridients.map((ig) => {
     return (
@@ -31,7 +30,7 @@ export const Order: FC<Props> = (props) => {
     <div className={classes.Order}>
       <p>Ingridients:{ingridientsOutput}</p>
       <p>
-        Price: <strong>USD{props.price}</strong>
+        Price: <strong>USD{props.totalPrice}</strong>
       </p>
     </div>
   );

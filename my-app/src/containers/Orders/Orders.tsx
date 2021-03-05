@@ -25,7 +25,6 @@ class Orders extends Component<{}, State> {
         fetchedOrder.push({ ...res.data[key], id: key });
       }
       this.setState({ loading: false, orders: fetchedOrder });
-      console.log(this.state.orders);
     } catch (err) {
       this.setState({ loading: false });
       console.log(err);
@@ -35,7 +34,7 @@ class Orders extends Component<{}, State> {
     return (
       <div>
         {this.state.orders.map(({ id, ingridients, price }: OrderProps) => (
-          <Order key={id} ingridients={ingridients} price={price} />
+          <Order key={id} ingridients={ingridients} totalPrice={price} />
         ))}
       </div>
     );

@@ -14,10 +14,11 @@ export interface Ingridients {
 export interface Disable {
   [key: string]: boolean;
 }
-
-export interface Props {
+export interface BurgerProps {
   ingridients: Ingridients;
   totalPrice: number;
+}
+export interface State extends BurgerProps {
   purchasable: boolean;
   purchasing: boolean;
   loading: boolean;
@@ -34,7 +35,7 @@ const INGRIDIENTS_PRICES: Price = {
   bacon: 0.7,
 };
 class BurgerBuilder extends Component<RouteComponentProps> {
-  state: Props = {
+  state: State = {
     ingridients: {},
     totalPrice: 0,
     purchasable: false,

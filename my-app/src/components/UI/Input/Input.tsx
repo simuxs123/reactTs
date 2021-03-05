@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent, FormEvent } from 'react';
+import React, { FC, ChangeEvent } from 'react';
 import classes from './Input.module.scss';
 import { ConfigProps } from '../../../containers/Checkout/ContactData/ContactData';
 type Props = {

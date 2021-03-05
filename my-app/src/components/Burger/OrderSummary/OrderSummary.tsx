@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Ingridients } from '../../../containers/BurgerBuilder/BurgerBuilder';
+import {
+  Ingridients,
+  BurgerProps,
+} from '../../../containers/BurgerBuilder/BurgerBuilder';
 import { Button } from '../../UI/Button/Button';
-interface Props {
-  ingridients: Ingridients;
-  totalPrice: number;
+interface Props extends BurgerProps {
   moduleClose(): void;
   continuePurchase(): void;
 }

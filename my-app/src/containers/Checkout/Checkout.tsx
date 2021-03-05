@@ -1,13 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { CheckoutSummary } from '../../components/Order/CheckoutSummary/CheckoutSummary';
-import { Ingridients } from '../BurgerBuilder/BurgerBuilder';
+import { BurgerProps, Ingridients } from '../BurgerBuilder/BurgerBuilder';
 import { RouteComponentProps, Route } from 'react-router-dom';
 import { ContactData } from '../Checkout/ContactData/ContactData';
-interface Props {
-  ingridients: Ingridients;
-  totalPrice: number | null;
-}
-export class Checkout extends Component<RouteComponentProps, Props> {
+
+export class Checkout extends Component<RouteComponentProps, BurgerProps> {
   state = {
     ingridients: {},
     totalPrice: 0,
