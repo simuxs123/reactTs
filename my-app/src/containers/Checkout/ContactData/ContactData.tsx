@@ -1,11 +1,16 @@
 import React, { Component, SyntheticEvent, ChangeEvent } from 'react';
 import { Button } from '../../../components/UI/Button/Button';
-import { Ingridients } from '../../BurgerBuilder/BurgerBuilder';
+import {
+  BurgerProps,
+  Ingridients,
+  mapStateToProps,
+} from '../../BurgerBuilder/BurgerBuilder';
 import { RouteComponentProps } from 'react-router-dom';
 import { Input } from '../../../components/UI/Input/Input';
 import classes from './ContactData.module.scss';
 import { instance } from '../../../axios-orders';
 import { Spinner } from '../../../components/UI/Spinner/Spinner';
+import { connect } from 'react-redux';
 type State = {
   loading: boolean;
   orderForm: OrderForm;
@@ -35,17 +40,14 @@ export interface ConfigProps {
     displayValue: string;
   }[];
 }
-interface Props extends RouteComponentProps {
-  ingridients: Ingridients;
-  totalPrice: number;
-}
+
 type OrderReq = {
   ingridients: Ingridients;
   price: string;
   orderData: { [key: string]: string };
 };
 
-export class ContactData extends Component<Props, State> {
+class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
   state = {
     orderForm: {
       name: {
@@ -232,3 +234,4 @@ export class ContactData extends Component<Props, State> {
     );
   }
 }
+export default connect(mapStateToProps)(ContactData);

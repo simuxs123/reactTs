@@ -1,2 +1,4 @@
-export const ADD_INGRIDIENTS: string = 'ADD_INGRIDIENTS';
-export const REMOVE_INGRIDIENTS: string = 'REMOVE_INGRIDIENTS';
+export enum ActionTypes {
+    ADD_INGRIDIENTS,
+    REMOVE_INGRIDIENTS
+}

@@ -2,10 +2,10 @@ import React from 'react';
 import classes from './BuildControls.module.scss';
 import { BuildControl } from './BuildControl/BuildControl';
 import { Disable } from '../../../containers/BurgerBuilder/BurgerBuilder';
-
+import { Action } from '../../../store/reducer';
 type Props = {
-  ingridientAdded(type: string): void;
-  ingridientRemove(type: string): void;
+  ingridientAdded(type: string): Action;
+  ingridientRemove(type: string): Action;
   ordered(): void;
   purchasable: boolean;
   disable: Disable;
