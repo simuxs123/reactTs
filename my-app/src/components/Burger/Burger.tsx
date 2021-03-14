@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { BurgerIngridient } from './BurgerIngridient/BurgerIngridient';
 import classes from './Burger.module.scss';
-import { Ingridients } from '../../containers/BurgerBuilder/BurgerBuilder';
+import { Ingridients } from '../../store/reducers/burgerBuilder';
 type Props = {
   ingridients: Ingridients;
 };

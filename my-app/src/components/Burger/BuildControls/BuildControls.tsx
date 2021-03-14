@@ -2,14 +2,18 @@ import React from 'react';
 import classes from './BuildControls.module.scss';
 import { BuildControl } from './BuildControl/BuildControl';
 import { Disable } from '../../../containers/BurgerBuilder/BurgerBuilder';
-import { Action } from '../../../store/reducer';
+import {
+  AddIngridientAction,
+  RemoveIngridientAction,
+} from '../../../store/reducers/burgerBuilder';
 type Props = {
-  ingridientAdded(type: string): Action;
-  ingridientRemove(type: string): Action;
+  ingridientAdded(type: string): AddIngridientAction;
+  ingridientRemove(type: string): RemoveIngridientAction;
   ordered(): void;
   purchasable: boolean;
   disable: Disable;
   totalPrice: number;
+  isAuth: boolean;
 };
 type Control = {
   label: string;
@@ -44,7 +48,7 @@ export const BuildControls: React.FC<Props> = (props) => {
         disabled={!props.purchasable}
         onClick={props.ordered}
       >
-        ORDER NOW
+        {props.isAuth ? 'ORDER NOW' : 'SIGN UP TO ORDER'}
       </button>
     </div>
   );

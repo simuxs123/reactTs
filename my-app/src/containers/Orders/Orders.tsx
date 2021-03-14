@@ -1,43 +1,63 @@
 import React, { Component } from 'react';
 import { Order } from '../../components/Order/Order';
 import { instance } from '../../axios-orders';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { withErrorHandler } from '../../hoc/withErrorHandler/withErrorHandler';
-import { Ingridients } from '../BurgerBuilder/BurgerBuilder';
-type State = {
-  loading: boolean;
-  orders: OrderProps[];
-};
+import { Ingridients } from '../../store/reducers/burgerBuilder';
+import { OrderBurgerStateProps } from '../../store/reducers/order';
+import { Spinner } from '../../components/UI/Spinner/Spinner';
+import * as actions from '../../store/actions';
+import { OrderReq } from '../../containers/Checkout/ContactData/ContactData';
+import { AuthStateProps } from '../../store/reducers/auth';
 type OrderProps = {
   id: string;
   ingridients: Ingridients;
   price: number;
 };
-class Orders extends Component<{}, State> {
-  state = {
-    orders: [],
-    loading: true,
-  };
-  async componentDidMount() {
-    try {
-      const res = await instance.get<OrderProps[]>('orders.json');
-      const fetchedOrder: OrderProps[] = [];
-      for (let key in res.data) {
-        fetchedOrder.push({ ...res.data[key], id: key });
-      }
-      this.setState({ loading: false, orders: fetchedOrder });
-    } catch (err) {
-      this.setState({ loading: false });
-      console.log(err);
-    }
+interface OrderAction {
+  onFetchOrders(token: string, userId: string): Function;
+}
+export type AllProps = AuthStateProps & OrderBurgerStateProps & OrderAction;
+class Orders extends Component<AllProps> {
+  componentDidMount() {
+    this.props.onFetchOrders(this.props.token, this.props.userId);
   }
   render() {
-    return (
-      <div>
-        {this.state.orders.map(({ id, ingridients, price }: OrderProps) => (
-          <Order key={id} ingridients={ingridients} totalPrice={price} />
-        ))}
-      </div>
-    );
+    let order: JSX.Element | JSX.Element[] = <Spinner />;
+    if (!this.props.loading) {
+      order = this.props.orders.map((order: OrderReq) => (
+        <Order
+          key={order.id}
+          ingridients={order.ingridients}
+          totalPrice={order.price}
+        />
+      ));
+    }
+    return <div>{order}</div>;
   }
 }
-export default withErrorHandler(Orders, instance);
+export const mapStateToProps = ({
+  order,
+  auth,
+}: {
+  order: OrderBurgerStateProps;
+  auth: AuthStateProps;
+}) => {
+  return {
+    orders: order.orders,
+    loading: order.loading,
+    token: auth.token,
+    userId: auth.userId,
+  };
+};
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    onFetchOrders: (token: string, userId: string) =>
+      dispatch(actions.fetchOrdersStart(token, userId)),
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(Orders, instance));

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { BurgerProps } from '../../containers/BurgerBuilder/BurgerBuilder';
+import { BurgerProps } from '../../store/reducers/burgerBuilder';
 import classes from './Order.module.scss';
 
 export const Order: FC<BurgerProps> = (props) => {

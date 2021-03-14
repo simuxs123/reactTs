@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Burger } from '../../Burger/Burger';
 import { Button } from '../../UI/Button/Button';
 import classes from './CheckoutSummary.module.scss';
-import { Ingridients } from '../../../containers/BurgerBuilder/BurgerBuilder';
+import { Ingridients } from '../../../store/reducers/burgerBuilder';
 type Props = {
   ingridients: Ingridients;
   checkoutCancelled(): void;

@@ -3,24 +3,26 @@ import classes from './Input.module.scss';
 import { ConfigProps } from '../../../containers/Checkout/ContactData/ContactData';
 type Props = {
   elementType: string;
-  changed(
+  changed?(
     event:
       | ChangeEvent<HTMLInputElement>
       | ChangeEvent<HTMLSelectElement>
       | ChangeEvent<HTMLTextAreaElement>
   ): void;
-  label?: string;
   value: string;
   elementConfig: ConfigProps;
   invalid: boolean;
   touched: boolean;
+  error?: string;
 };
 
 export const Input: FC<Props> = (props) => {
   let inputElement: null | JSX.Element = null;
   const inputClasses: string[] = [classes.InputElement];
+  let err: string | undefined | JSX.Element = '';
   if (props.invalid && props.touched) {
     inputClasses.push(classes.Invalid);
+    err = <p style={{ color: 'red' }}>{props.error}</p>;
   }
   switch (props.elementType) {
     case 'input':
@@ -72,6 +74,7 @@ export const Input: FC<Props> = (props) => {
     <div className={classes.Input}>
       {/* <label className={classes.Label}>{props.label}</label> */}
       {inputElement}
+      {err}
     </div>
   );
 };

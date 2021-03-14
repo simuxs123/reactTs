@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import {
   Ingridients,
   BurgerProps,
-} from '../../../containers/BurgerBuilder/BurgerBuilder';
+} from '../../../store/reducers/burgerBuilder';
 import { Button } from '../../UI/Button/Button';
 interface Props extends BurgerProps {
   moduleClose(): void;

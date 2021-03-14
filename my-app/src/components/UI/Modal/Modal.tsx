@@ -2,9 +2,9 @@ import React, { Component, Fragment, ReactNode } from 'react';
 import classes from './Modal.module.scss';
 import { Backdrop } from '../Backdrop/Backdrop';
 export interface Props {
-  show?: boolean | null;
-  moduleClose?(): void;
-  children?: ReactNode;
+  show: boolean;
+  moduleClose(): void;
+  children: ReactNode;
 }
 export class Modal extends Component<Props> {
   shouldComponentUpdate(nextProps: Props) {

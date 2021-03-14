@@ -1,37 +1,41 @@
 import React, { Component, SyntheticEvent, ChangeEvent } from 'react';
 import { Button } from '../../../components/UI/Button/Button';
 import {
-  BurgerProps,
+  BurgerBuilderStateProps,
   Ingridients,
-  mapStateToProps,
-} from '../../BurgerBuilder/BurgerBuilder';
+} from '../../../store/reducers/burgerBuilder';
+import { OrderBurgerStateProps } from '../../../store/reducers/order';
+import { AuthStateProps } from '../../../store/reducers/auth';
 import { RouteComponentProps } from 'react-router-dom';
 import { Input } from '../../../components/UI/Input/Input';
 import classes from './ContactData.module.scss';
-import { instance } from '../../../axios-orders';
 import { Spinner } from '../../../components/UI/Spinner/Spinner';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import * as actions from '../../../store/actions';
+import { checkValidity } from '../../../shared/utility';
 type State = {
-  loading: boolean;
   orderForm: OrderForm;
   formIsValid: boolean;
 };
-type OrderForm = {
+export interface OrderForm {
   [key: string]: ElementProps;
-};
+}
 type ElementProps = {
   elementType: string;
   elementConfig: ConfigProps;
   value: string;
   validation: Validation;
+  error?: string;
   valid: boolean;
   touched: boolean;
 };
-type Validation = {
+export interface Validation {
   required: boolean;
   minLength?: number;
   maxLength?: number;
-};
+  isEmail?: boolean;
+}
 export interface ConfigProps {
   type?: string;
   placeholder?: string;
@@ -40,14 +44,26 @@ export interface ConfigProps {
     displayValue: string;
   }[];
 }
-
-type OrderReq = {
+interface ReducerStateProps {
+  burgerBuilder: BurgerBuilderStateProps;
+  order: OrderBurgerStateProps;
+  auth: AuthStateProps;
+}
+export interface OrderReq {
+  id?: string;
   ingridients: Ingridients;
-  price: string;
+  price: number;
   orderData: { [key: string]: string };
-};
-
-class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
+  userId: string;
+}
+interface DispatchActions {
+  onpPurchaseBurgerStart(orderData: OrderReq, token: string): Function;
+}
+export type AllProps = OrderBurgerStateProps &
+  BurgerBuilderStateProps &
+  RouteComponentProps &
+  AuthStateProps;
+class ContactData extends Component<AllProps & DispatchActions, State> {
   state = {
     orderForm: {
       name: {
@@ -135,42 +151,22 @@ class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
       },
     },
     formIsValid: false,
-    loading: false,
   };
   orderHandler = async (event: SyntheticEvent) => {
     event.preventDefault();
-    this.setState({ loading: true });
     const formData: { [key: string]: string } = {};
     for (let [key, value] of Object.entries(this.state.orderForm)) {
       formData[key] = value.value;
     }
     const order: OrderReq = {
       ingridients: this.props.ingridients,
-      price: this.props.totalPrice.toFixed(2),
+      price: +this.props.totalPrice.toFixed(2),
       orderData: formData,
+      userId: this.props.userId,
     };
-    try {
-      const res = await instance.post<OrderReq>('/orders.json', order);
-      this.setState({ loading: false });
-      this.props.history.push('/');
-    } catch (err) {
-      this.setState({ loading: false });
-      console.log(err);
-    }
+    this.props.onpPurchaseBurgerStart(order, this.props.token);
   };
-  checkValidity = (value: string, rules: Validation) => {
-    let isValid = true;
-    if (rules.required) {
-      isValid = value.trim() !== '' && isValid;
-    }
-    if (rules.minLength) {
-      isValid = value.length <= rules.minLength && isValid;
-    }
-    if (rules.maxLength) {
-      isValid = value.length >= rules.maxLength && isValid;
-    }
-    return isValid;
-  };
+
   changeHandler = (
     event:
       | ChangeEvent<HTMLInputElement>
@@ -183,7 +179,7 @@ class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
       ...updatedFormOrder[inputIndetifier],
     };
     updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = this.checkValidity(
+    updatedFormElement.valid = checkValidity(
       updatedFormElement.value,
       updatedFormElement.validation
     );
@@ -223,7 +219,7 @@ class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
         </Button>
       </form>
     );
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
     return (
@@ -234,4 +230,23 @@ class ContactData extends Component<BurgerProps & RouteComponentProps, State> {
     );
   }
 }
-export default connect(mapStateToProps)(ContactData);
+export const mapStateToProps = ({
+  burgerBuilder,
+  order,
+  auth,
+}: ReducerStateProps) => {
+  return {
+    ingridients: burgerBuilder.ingridients,
+    totalPrice: burgerBuilder.totalPrice,
+    loading: order.loading,
+    token: auth.token,
+    userId: auth.userId,
+  };
+};
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    onpPurchaseBurgerStart: (orderData: OrderReq, token: string) =>
+      dispatch(actions.purchaseBurgerStart(orderData, token)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);
