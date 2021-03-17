@@ -1,13 +1,15 @@
 import React, { FC, Fragment, useState, useEffect } from 'react';
 import { Modal } from '../../components/UI/Modal/Modal';
 import { AxiosInstance } from 'axios';
+import { AllProps } from '../../containers/Orders/Orders';
 import useHttpErrorHandler from '../../hooks/http-error-handler';
+import { RouteComponentProps } from 'react-router-dom';
 interface State {
   error: string;
   errorClear(): void;
 }
 export const withErrorHandler = (
-  WrappedComponent: typeof React.Component | FC<any>,
+  WrappedComponent: Function,
   instance: AxiosInstance
 ) => {
   return (
