@@ -1,52 +1,29 @@
-import React, { FC, Fragment, Component } from 'react';
+import React, { FC, Fragment, useState, useEffect } from 'react';
 import { Modal } from '../../components/UI/Modal/Modal';
 import { AxiosInstance } from 'axios';
-type Props = {
-  error: string | null;
-};
-
+import useHttpErrorHandler from '../../hooks/http-error-handler';
+interface State {
+  error: string;
+  errorClear(): void;
+}
 export const withErrorHandler = (
-  WrappedComponent: typeof React.Component,
+  WrappedComponent: typeof React.Component | FC<any>,
   instance: AxiosInstance
 ) => {
-  return class extends Component {
-    state: Props = {
-      error: null,
-    };
-    reqInterceptor!: number;
-    resInterceptor!: number;
-
-    componentWillMount() {
-      this.reqInterceptor = instance.interceptors.request.use((req) => {
-        this.setState({ error: null });
-        return req;
-      });
-      this.resInterceptor = instance.interceptors.response.use(
-        (res) => res,
-        (error) => {
-          this.setState({ error: error.message });
-        }
-      );
-    }
-    componentWillUnmount() {
-      instance.interceptors.request.eject(this.reqInterceptor);
-      instance.interceptors.response.eject(this.resInterceptor);
-    }
-    errorConfirmedHandler = () => {
-      this.setState({ error: null });
-    };
-    render() {
-      return (
-        <Fragment>
-          <Modal
-            show={this.state.error ? true : false}
-            moduleClose={this.errorConfirmedHandler}
-          >
-            {this.state.error ? this.state.error : null}
-          </Modal>
-          <WrappedComponent {...this.props} />
-        </Fragment>
-      );
-    }
+  return (
+    props: JSX.IntrinsicAttributes &
+      JSX.IntrinsicClassAttributes<React.Component<{}, {}, any>> &
+      Readonly<{}> &
+      Readonly<{ children?: React.ReactNode }>
+  ) => {
+    const [error, errorClear] = useHttpErrorHandler(instance);
+    return (
+      <Fragment>
+        <Modal show={error ? true : false} moduleClose={errorClear}>
+          {error ? error : null}
+        </Modal>
+        <WrappedComponent {...props} />
+      </Fragment>
+    );
   };
 };

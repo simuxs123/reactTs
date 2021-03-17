@@ -1,50 +1,47 @@
-import React, { Component, Fragment } from 'react';
+import React, { FC } from 'react';
 import { CheckoutSummary } from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import { OrderBurgerStateProps } from '../../store/reducers/order';
 import { BurgerBuilderStateProps } from '../../store/reducers/burgerBuilder';
-import { Route, Redirect } from 'react-router-dom';
-import { AllProps } from './ContactData/ContactData';
+import { Route, Redirect, RouteComponentProps } from 'react-router-dom';
 import ContactData from '../Checkout/ContactData/ContactData';
 import { connect } from 'react-redux';
 
-class Checkout extends Component<AllProps> {
-  checkoutCancelledHandler = () => {
-    this.props.history.goBack();
-  };
-  checkoutContinuedHandler = () => {
-    this.props.history.replace('/checkout/contact-data');
-  };
-  render() {
-    let summary = <Redirect to="/" />;
-    if (Object.keys(this.props.ingridients).length !== 0) {
-      const purchasedRedirect = this.props.purchased ? (
-        <Redirect to="/" />
-      ) : null;
-      summary = (
-        <div>
-          {purchasedRedirect}
-          <CheckoutSummary
-            checkoutCancelled={this.checkoutCancelledHandler}
-            checkoutContinued={this.checkoutContinuedHandler}
-            ingridients={this.props.ingridients}
-          />
-          <Route
-            path={this.props.match.path + '/contact-data'}
-            component={ContactData}
-          />
-        </div>
-      );
-    }
-    return summary;
-  }
-}
-export const mapStateToProps = ({
-  burgerBuilder,
-  order,
-}: {
+interface ReducerProps {
   burgerBuilder: BurgerBuilderStateProps;
   order: OrderBurgerStateProps;
-}) => {
+}
+type Props = BurgerBuilderStateProps &
+  OrderBurgerStateProps &
+  RouteComponentProps;
+
+const Checkout: FC<Props> = (props) => {
+  const checkoutCancelledHandler = () => {
+    props.history.goBack();
+  };
+  const checkoutContinuedHandler = () => {
+    props.history.replace('/checkout/contact-data');
+  };
+  let summary = <Redirect to="/" />;
+  if (Object.keys(props.ingridients).length !== 0) {
+    const purchasedRedirect = props.purchased ? <Redirect to="/" /> : null;
+    summary = (
+      <div>
+        {purchasedRedirect}
+        <CheckoutSummary
+          checkoutCancelled={checkoutCancelledHandler}
+          checkoutContinued={checkoutContinuedHandler}
+          ingridients={props.ingridients}
+        />
+        <Route
+          path={props.match.path + '/contact-data'}
+          component={ContactData}
+        />
+      </div>
+    );
+  }
+  return summary;
+};
+export const mapStateToProps = ({ burgerBuilder, order }: ReducerProps) => {
   return {
     ingridients: burgerBuilder.ingridients,
     purchased: order.purchased,

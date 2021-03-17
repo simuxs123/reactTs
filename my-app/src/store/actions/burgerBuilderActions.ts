@@ -28,7 +28,7 @@ export const fetchIngridientsFailed=():SetFetchIngridientsFailed=>{
         
     }
 }
-export const initIngridients=():any=>{  //nesugalvoju ka cia rasyti!!
+export const initIngridients=():Function=>{  //nesugalvoju ka cia rasyti!!
     return async (dispatch: Dispatch)=>{
         try {
             const res = await instance.get<Ingridients>(

@@ -30,7 +30,7 @@ export const Order: FC<BurgerProps> = (props) => {
     <div className={classes.Order}>
       <p>Ingridients:{ingridientsOutput}</p>
       <p>
-        Price: <strong>USD{props.totalPrice}</strong>
+        Price: <strong>USD {props.totalPrice}</strong>
       </p>
     </div>
   );

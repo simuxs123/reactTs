@@ -1,4 +1,4 @@
-import React, { Component, SyntheticEvent, ChangeEvent } from 'react';
+import React, { FC, SyntheticEvent, ChangeEvent, useState } from 'react';
 import { Button } from '../../../components/UI/Button/Button';
 import {
   BurgerBuilderStateProps,
@@ -14,14 +14,11 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as actions from '../../../store/actions';
 import { checkValidity } from '../../../shared/utility';
-type State = {
-  orderForm: OrderForm;
-  formIsValid: boolean;
-};
+
 export interface OrderForm {
   [key: string]: ElementProps;
 }
-type ElementProps = {
+interface ElementProps {
   elementType: string;
   elementConfig: ConfigProps;
   value: string;
@@ -29,7 +26,12 @@ type ElementProps = {
   error?: string;
   valid: boolean;
   touched: boolean;
-};
+}
+interface ReducerStateProps {
+  burgerBuilder: BurgerBuilderStateProps;
+  order: OrderBurgerStateProps;
+  auth: AuthStateProps;
+}
 export interface Validation {
   required: boolean;
   minLength?: number;
@@ -44,11 +46,7 @@ export interface ConfigProps {
     displayValue: string;
   }[];
 }
-interface ReducerStateProps {
-  burgerBuilder: BurgerBuilderStateProps;
-  order: OrderBurgerStateProps;
-  auth: AuthStateProps;
-}
+
 export interface OrderReq {
   id?: string;
   ingridients: Ingridients;
@@ -59,122 +57,122 @@ export interface OrderReq {
 interface DispatchActions {
   onpPurchaseBurgerStart(orderData: OrderReq, token: string): Function;
 }
-export type AllProps = OrderBurgerStateProps &
+type AllProps = OrderBurgerStateProps &
   BurgerBuilderStateProps &
   RouteComponentProps &
-  AuthStateProps;
-class ContactData extends Component<AllProps & DispatchActions, State> {
-  state = {
-    orderForm: {
-      name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your name',
-        },
-        value: '',
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
+  AuthStateProps &
+  DispatchActions;
+const ContactData: FC<AllProps> = (props) => {
+  const [orderForm, setOrderForm] = useState<OrderForm>({
+    name: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Your name',
       },
-      street: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your street',
-        },
-        value: '',
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
+      value: '',
+      validation: {
+        required: true,
       },
-      postCode: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your ZIP code',
-        },
-        value: '',
-        validation: {
-          required: true,
-          minLength: 5,
-          maxLength: 5,
-        },
-        valid: false,
-        touched: false,
-      },
-      country: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your country',
-        },
-        value: '',
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
-      },
-      email: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'email',
-          placeholder: 'Your email',
-        },
-        value: '',
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
-      },
-      deliveryMethod: {
-        elementType: 'select',
-        elementConfig: {
-          options: [
-            { value: '', displayValue: 'Delivery' },
-            { value: 'fastest', displayValue: 'Fastest' },
-            { value: 'slowest', displayValue: 'Slowest' },
-          ],
-        },
-        value: '',
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
-      },
+      valid: false,
+      touched: false,
     },
-    formIsValid: false,
-  };
-  orderHandler = async (event: SyntheticEvent) => {
+    street: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Your street',
+      },
+      value: '',
+      validation: {
+        required: true,
+      },
+      valid: false,
+      touched: false,
+    },
+    postCode: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Your ZIP code',
+      },
+      value: '',
+      validation: {
+        required: true,
+        minLength: 5,
+        maxLength: 5,
+      },
+      valid: false,
+      touched: false,
+    },
+    country: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Your country',
+      },
+      value: '',
+      validation: {
+        required: true,
+      },
+      valid: false,
+      touched: false,
+    },
+    email: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'email',
+        placeholder: 'Your email',
+      },
+      value: '',
+      validation: {
+        required: true,
+      },
+      valid: false,
+      touched: false,
+    },
+    deliveryMethod: {
+      elementType: 'select',
+      elementConfig: {
+        options: [
+          { value: '', displayValue: 'Delivery' },
+          { value: 'fastest', displayValue: 'Fastest' },
+          { value: 'slowest', displayValue: 'Slowest' },
+        ],
+      },
+      value: '',
+      validation: {
+        required: true,
+      },
+      valid: false,
+      touched: false,
+    },
+  });
+  const [formIsValid, setFormIsValid] = useState<boolean>(false);
+
+  const orderHandler = (event: SyntheticEvent) => {
     event.preventDefault();
     const formData: { [key: string]: string } = {};
-    for (let [key, value] of Object.entries(this.state.orderForm)) {
+    for (let [key, value] of Object.entries(orderForm)) {
       formData[key] = value.value;
     }
     const order: OrderReq = {
-      ingridients: this.props.ingridients,
-      price: +this.props.totalPrice.toFixed(2),
+      ingridients: props.ingridients,
+      price: +props.totalPrice.toFixed(2),
       orderData: formData,
-      userId: this.props.userId,
+      userId: props.userId,
     };
-    this.props.onpPurchaseBurgerStart(order, this.props.token);
+    props.onpPurchaseBurgerStart(order, props.token);
   };
 
-  changeHandler = (
+  const changeHandler = (
     event:
       | ChangeEvent<HTMLInputElement>
       | ChangeEvent<HTMLSelectElement>
       | ChangeEvent<HTMLTextAreaElement>,
     inputIndetifier: string
   ) => {
-    const updatedFormOrder: OrderForm = { ...this.state.orderForm };
+    const updatedFormOrder: OrderForm = { ...orderForm };
     const updatedFormElement: ElementProps = {
       ...updatedFormOrder[inputIndetifier],
     };
@@ -189,47 +187,47 @@ class ContactData extends Component<AllProps & DispatchActions, State> {
     for (let [key, value] of Object.entries(updatedFormOrder)) {
       formIsValid = value.valid && formIsValid;
     }
-    this.setState({ orderForm: updatedFormOrder, formIsValid: formIsValid });
+    setOrderForm(updatedFormOrder);
+    setFormIsValid(formIsValid);
   };
-  render() {
-    const formElementsArray = [];
-    for (let [key, value] of Object.entries(this.state.orderForm)) {
-      formElementsArray.push({
-        id: key,
-        config: value,
-      });
-    }
-    let form = (
-      <form onSubmit={this.orderHandler}>
-        {formElementsArray.map(({ id, config }) => {
-          return (
-            <Input
-              key={id}
-              elementType={config.elementType}
-              value={config.value}
-              elementConfig={config.elementConfig}
-              changed={(event) => this.changeHandler(event, id)}
-              invalid={!config.valid}
-              touched={config.touched}
-            />
-          );
-        })}
-        <Button btnType="Success" disabled={!this.state.formIsValid}>
-          Order
-        </Button>
-      </form>
-    );
-    if (this.props.loading) {
-      form = <Spinner />;
-    }
-    return (
-      <div className={classes.ContactData}>
-        <h4>Enter your contact data</h4>
-        {form}
-      </div>
-    );
+
+  const formElementsArray = [];
+  for (let [key, value] of Object.entries(orderForm)) {
+    formElementsArray.push({
+      id: key,
+      config: value,
+    });
   }
-}
+  let form = (
+    <form onSubmit={orderHandler}>
+      {formElementsArray.map(({ id, config }) => {
+        return (
+          <Input
+            key={id}
+            elementType={config.elementType}
+            value={config.value}
+            elementConfig={config.elementConfig}
+            changed={(event) => changeHandler(event, id)}
+            invalid={!config.valid}
+            touched={config.touched}
+          />
+        );
+      })}
+      <Button btnType="Success" disabled={!formIsValid}>
+        Order
+      </Button>
+    </form>
+  );
+  if (props.loading) {
+    form = <Spinner />;
+  }
+  return (
+    <div className={classes.ContactData}>
+      <h4>Enter your contact data</h4>
+      {form}
+    </div>
+  );
+};
 export const mapStateToProps = ({
   burgerBuilder,
   order,

@@ -71,7 +71,7 @@ export const auth=(email:string,password:string,isSignup:boolean):any=>{
         }
     }
 }
-export const authCheckState=():any=>{
+export const authCheckState=():any=>{ //nezinau tipo
     return (dispatch:Dispatch) =>{
         const token:string|null =localStorage.getItem('token');
         if(!token){
